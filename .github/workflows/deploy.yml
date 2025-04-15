@@ -49,4 +49,5 @@ jobs:
           --resource-group ${{ secrets.RESOURCE_GROUP }} \
           --image ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest \
           --set-env-vars GITHUB_RUN_ID=${{ github.run_id }} \
-          --revision-suffix rev-${{ github.run_number }}
+          --revision-suffix rev-${{ github.run_number }} \
+          --scale-min-replicas 1 
