@@ -8,7 +8,6 @@ import decode from 'jwt-decode'
  *    and maybe nginx in production (cleaner calls and avoids CORS issues).
  */
 const LOGIN_URL = '/api/auth/login';
-console.log("LOGIN URL",LOGIN_URL);
 const ROLE_ADMIN = 'ADMIN'
 
 /**
