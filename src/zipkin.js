@@ -28,7 +28,7 @@ export default {
       ctxImpl: new ExplicitContext(),
       recorder: new BatchRecorder({
         logger: new HttpLogger({
-          endpoint: ZIPKIN_URL+'/api/v2/spans',
+          endpoint: ZIPKIN_URL + '/api/v2/spans',
           jsonEncoder: jsonEncoder.JSON_V2
         })
       }),
