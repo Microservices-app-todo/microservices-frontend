@@ -36,17 +36,3 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
-
-    - name: Pull, tag, and push public Docker images to ACR
-      run: |
-        docker pull redis:7.0-alpine
-        docker tag redis:7.0-alpine ${{ secrets.ACR_NAME }}.azurecr.io/redis:7.0-alpine
-        docker push ${{ secrets.ACR_NAME }}.azurecr.io/redis:7.0-alpine
-
-        docker pull nginx:alpine
-        docker tag nginx:alpine ${{ secrets.ACR_NAME }}.azurecr.io/nginx:alpine
-        docker push ${{ secrets.ACR_NAME }}.azurecr.io/nginx:alpine
-
-        docker pull openzipkin/zipkin
-        docker tag openzipkin/zipkin ${{ secrets.ACR_NAME }}.azurecr.io/zipkin:latest
-        docker push ${{ secrets.ACR_NAME }}.azurecr.io/zipkin:latest
