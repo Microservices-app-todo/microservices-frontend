@@ -1,6 +1,7 @@
 name: Build and Push Docker Image to ACR
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop  # Puedes cambiar esto a la rama que prefieras
@@ -27,11 +28,25 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        login-server: ${{ secrets.ACR_NAME }}.azurecr.io  # Aquí se usa el login server
+        login-server: ${{ secrets.ACR_NAME }}.azurecr.io
 
-    - name: Build and push Docker image
+    - name: Build and push local Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
         tags: ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
+
+    - name: Pull, tag, and push public Docker images to ACR
+      run: |
+        docker pull redis:7.0-alpine
+        docker tag redis:7.0-alpine ${{ secrets.ACR_NAME }}.azurecr.io/redis:7.0-alpine
+        docker push ${{ secrets.ACR_NAME }}.azurecr.io/redis:7.0-alpine
+
+        docker pull nginx:alpine
+        docker tag nginx:alpine ${{ secrets.ACR_NAME }}.azurecr.io/nginx:alpine
+        docker push ${{ secrets.ACR_NAME }}.azurecr.io/nginx:alpine
+
+        docker pull openzipkin/zipkin
+        docker tag openzipkin/zipkin ${{ secrets.ACR_NAME }}.azurecr.io/zipkin:latest
+        docker push ${{ secrets.ACR_NAME }}.azurecr.io/zipkin:latest

@@ -44,6 +44,7 @@
                             @remove="removeTask(index)"
                             :todo="todo"
                             :key="index"
+                            
                   ></todo-item>
         </transition-group>
       </div>
