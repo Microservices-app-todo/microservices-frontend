@@ -1,6 +1,7 @@
 name: Build and Push Docker Image to ACR
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop
@@ -12,6 +13,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Replace variables using PROXY_URL
+      run: |
+        chmod +x ./replace-vars.sh
+        ./replace-vars.sh "${{ secrets.PROXY_URL }}"
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -35,7 +41,7 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
-        
+
     - name: Log in to Azure
       uses: azure/login@v1
       with:
@@ -49,4 +55,4 @@ jobs:
           --resource-group ${{ secrets.RESOURCE_GROUP }} \
           --image ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest \
           --set-env-vars GITHUB_RUN_ID=${{ github.run_id }} \
-          --revision-suffix rev-${{ github.run_number }} \
+          --revision-suffix rev-${{ github.run_number }}
