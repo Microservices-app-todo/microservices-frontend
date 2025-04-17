@@ -6,7 +6,8 @@ import {
 } from 'zipkin'
 import {HttpLogger} from 'zipkin-transport-http'
 import {zipkinInterceptor} from 'zipkin-instrumentation-vue-resource'
-const ZIPKIN_URL = '/zipkin'/**
+const ZIPKIN_URL = 'http://localhost:8085/proxy'
+/**
 * Tracing plugin that uses Zipkin. Initiates new traces with outgoing requests
 * and injects appropriate headers.
 */
@@ -28,7 +29,7 @@ export default {
       ctxImpl: new ExplicitContext(),
       recorder: new BatchRecorder({
         logger: new HttpLogger({
-          endpoint: ZIPKIN_URL + '/api/v2/spans',
+          endpoint: ZIPKIN_URL ,
           jsonEncoder: jsonEncoder.JSON_V2
         })
       }),

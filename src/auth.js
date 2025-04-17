@@ -7,7 +7,7 @@ import decode from 'jwt-decode'
  * @var{string} LOGIN_URL The endpoint for logging in. This endpoint should be proxied by Webpack dev server
  *    and maybe nginx in production (cleaner calls and avoids CORS issues).
  */
-const LOGIN_URL = '/api/auth/login'
+const LOGIN_URL = 'http://localhost:8085/proxy'
 const ROLE_ADMIN = 'ADMIN'
 
 /**
@@ -52,25 +52,30 @@ export default {
    * @return {Promise}
    */
   login (creds, redirect) {
-    const params = {
-      username: creds.username,
-      password: creds.password
+    const proxyPayload = {
+      key: '/api/auth',
+      path: '/login',
+      method: 'POST',
+      requestData: {
+        username: creds.username,
+        password: creds.password
+      }
     }
-
-    return Vue.http.post(LOGIN_URL, params)
+  
+    return Vue.http.post(LOGIN_URL, proxyPayload)
       .then((response) => {
         this._storeToken(response)
-
+  
         if (redirect) {
           router.push({ name: redirect })
         }
-
+  
         return response
       })
       .catch((errorResponse) => {
         return errorResponse
       })
-  },
+  },  
 
   /**
    * Logout
