@@ -18,15 +18,6 @@ jobs:
       run: |
         chmod +x ./replace-vars.sh
         ./replace-vars.sh "${{ secrets.PROXY_URL }}"
-    - name: Save modified files
-      uses: actions/upload-artifact@v3
-      with:
-        name: modified-files
-        path: |
-          src/auth.js
-          src/components/Todos.vue
-          src/zipkin.js
-
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
