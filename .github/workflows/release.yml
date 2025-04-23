@@ -11,23 +11,31 @@ jobs:
       image: node:8.17-alpine
       
     steps:
-    - name: Checkout
+    - name: Checkout repository with full history
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0  # Necesario para semantic-release
-      
-    - name: Install Git and dependencies
+        fetch-depth: 0  # Necesario para obtener todo el historial de commits
+        persist-credentials: true  # Conserva las credenciales de Git
+        
+    - name: Setup Git environment
       run: |
         apk add --no-cache git
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        git fetch --tags
+        
+    - name: Install Node.js and npm
+      run: |
         npm install -g npm@6.13.4
         node -v
         npm -v
         git --version
         
-    - name: Install Project Dependencies
+    - name: Install project dependencies
       run: npm install
       
-    - name: Install Compatible Semantic Release
+    - name: Install compatible Semantic Release
       run: |
         npm install -g semantic-release@15.14.0
         npm install -g @semantic-release/git@7.0.18
@@ -39,4 +47,10 @@ jobs:
     - name: Run Semantic Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npx semantic-release
+      run: |
+        echo "Current directory: $(pwd)"
+        echo "Git status:"
+        git status
+        echo "Git remote -v:"
+        git remote -v
+        npx semantic-release
