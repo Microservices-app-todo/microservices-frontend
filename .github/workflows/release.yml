@@ -6,18 +6,35 @@ on:
       - develop
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   update_release_draft:
-    permissions:
-      contents: write
-
-      pull-requests: write
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - uses: release-drafter/release-drafter@v6
-
+      - name: Run Release Drafter
+        uses: release-drafter/release-drafter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up GitHub CLI
+        uses: cli/cli-action@v2
+
+      - name: Publish latest draft release
+        run: |
+          latest_draft=$(gh release list --repo "${{ github.repository }}" --limit 1 --json tagName,isDraft | jq -r '.[] | select(.isDraft == true) | .tagName')
+          echo "Found draft release: $latest_draft"
+
+          if [ -n "$latest_draft" ]; then
+            gh release edit "$latest_draft" --repo "${{ github.repository }}" --draft=false
+            echo "Published release: $latest_draft"
+          else
+            echo "No draft release found."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
