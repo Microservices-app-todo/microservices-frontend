@@ -1,25 +1,32 @@
-name: Build and Release
+name: Semantic Release (Legacy)
 
 on:
   push:
-    branches:
-      - develop
+    branches: [ develop ]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    container:
+      image: node:8.17-alpine
+      
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t my-app .
-          docker push my-app:latest
-
-      - name: Run Semantic Release
-        run: |
-          docker run --rm my-app semantic-release
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Setup Node
+      run: |
+        npm install -g npm@6.13.4
+        node -v
+        npm -v
+        
+    - name: Install Dependencies
+      run: npm install
+      
+    - name: Semantic Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        npm install -g semantic-release@15
+        npx semantic-release
