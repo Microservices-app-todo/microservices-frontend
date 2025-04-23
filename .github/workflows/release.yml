@@ -1,48 +1,20 @@
-name: Semantic Release (Fixed Path)
+name: Draft Release Notes
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
-  release:
+  draft_release_notes:
     runs-on: ubuntu-latest
-    container:
-      image: node:8.17-alpine
-      # Añadir mapeo de volúmenes explícito
-      options: --workdir /__w/microservices-frontend/microservices-frontend
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Set up Release Drafter
+      uses: release-drafter/release-drafter@v5
       with:
-        fetch-depth: 0
-        path: /__w/microservices-frontend/microservices-frontend
-
-    - name: Setup Git and dependencies
-      run: |
-        apk add --no-cache git
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        
-        # Verificar estructura del directorio
-        echo "Contenido del directorio:"
-        ls -la
-        echo "Estado de Git:"
-        git status
-
-        npm install -g npm@6.13.4
-
-    - name: Install project dependencies
-      run: npm install
-
-    - name: Install Semantic Release
-      run: |
-        npm install -g semantic-release@15.14.0
-        npm install -g @semantic-release/git@7.0.18
-        npm install -g @semantic-release/github@5.5.5
-
-    - name: Run Semantic Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npx semantic-release
+        config-name: release-drafter.yml
+        versioning-strategy: "auto"
