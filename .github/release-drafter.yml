@@ -1,4 +1,6 @@
+publish: true
 template: |
   ## What’s Changed
 
   $CHANGES
+  
