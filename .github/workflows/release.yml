@@ -17,9 +17,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install semantic-release
-        run: npm install semantic-release@latest --no-save
-
       - name: Run semantic-release
         run: npx semantic-release
         env:
