@@ -13,20 +13,30 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Necesario para semantic-release
       
-    - name: Setup Node
+    - name: Install Git and dependencies
       run: |
+        apk add --no-cache git
         npm install -g npm@6.13.4
         node -v
         npm -v
+        git --version
         
-    - name: Install Dependencies
+    - name: Install Project Dependencies
       run: npm install
       
-    - name: Semantic Release
+    - name: Install Compatible Semantic Release
+      run: |
+        npm install -g semantic-release@15.14.0
+        npm install -g @semantic-release/git@7.0.18
+        npm install -g @semantic-release/github@5.5.5
+        npm install -g @semantic-release/npm@5.3.4
+        npm install -g @semantic-release/changelog@3.0.6
+        npm install -g @semantic-release/commit-analyzer@6.3.3
+        
+    - name: Run Semantic Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      run: |
-        npm install -g semantic-release@15
-        npx semantic-release
+      run: npx semantic-release
