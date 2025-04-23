@@ -1,4 +1,4 @@
-name: Semantic Release (Fixed)
+name: Semantic Release (Fixed Path)
 
 on:
   push:
@@ -9,37 +9,35 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: node:8.17-alpine
-      
+      # Añadir mapeo de volúmenes explícito
+      options: --workdir /__w/microservices-frontend/microservices-frontend
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0  # Necesario para semantic-release
-        path: /github/workspace  # Ruta explícita para el contenedor
+        fetch-depth: 0
+        path: /__w/microservices-frontend/microservices-frontend
 
     - name: Setup Git and dependencies
       run: |
-        # Instalar Git y configurar el entorno
         apk add --no-cache git
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
         
-        # Mover al directorio correcto (crítico para contenedores)
-        cd /github/workspace
-        echo "Current directory: $(pwd)"
-        git status  # Verificar que es un repo Git
+        # Verificar estructura del directorio
+        echo "Contenido del directorio:"
+        ls -la
+        echo "Estado de Git:"
+        git status
 
-        # Configurar npm
         npm install -g npm@6.13.4
 
     - name: Install project dependencies
-      run: |
-        cd /github/workspace
-        npm install
+      run: npm install
 
     - name: Install Semantic Release
       run: |
-        cd /github/workspace
         npm install -g semantic-release@15.14.0
         npm install -g @semantic-release/git@7.0.18
         npm install -g @semantic-release/github@5.5.5
@@ -47,6 +45,4 @@ jobs:
     - name: Run Semantic Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cd /github/workspace
-        npx semantic-release
+      run: npx semantic-release
